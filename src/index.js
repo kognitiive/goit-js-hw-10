@@ -11,15 +11,17 @@ inputRef.addEventListener('input', debounce(solver, DEBOUNCE_DELAY))
 
 function solver(e) {
     const inpCountry = inputRef.value.trim()
-    if (!inpCountry) { return };
+    if (!inpCountry) {return resetMarkup()};
     fetchCoutries(inpCountry)
         .then(countries => {
-            if (!countries) { return resetMarkup()} 
             resetMarkup()
+            if (!countries) {return} 
             if (countries.length > 10) {return Notify.info("Too many matches found. Please enter a more specific name."); }
             if (countries.length === 1) {return renderCountryMarkup(countries)}
-            if (countries.length > 1) {return renderCountriesList(countries)}    
-            console.log(countries)
+            if (countries.length > 1) {return renderCountriesList(countries)}
+        }).catch(error => {
+            resetMarkup()
+            return Notify.failure("Oops, there is no country with that name");
         })
     
 };
